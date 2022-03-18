@@ -1,9 +1,15 @@
 ---
-- name: TUANDA
+- name: Show current {{ redis_role }}
   debug:
     var: redis_role
   tags:
     - master
+
+- include: turning_redis.yml
+  become: true
+  when: turning_redis
+  tags:
+    - turning_redis
 
 # tasks file for redis-all-in-one
 - include: dependencies.yml

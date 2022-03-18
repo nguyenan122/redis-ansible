@@ -5,6 +5,8 @@ redis_version: 6.2.6
 redis_user: redis
 redis_group: '{{ redis_user }}'
 
+turning_redis: true
+
 # when true then install .rpm file
 install_dependencies: false
 package_names:

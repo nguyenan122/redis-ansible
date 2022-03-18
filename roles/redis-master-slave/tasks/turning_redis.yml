@@ -1,0 +1,60 @@
+- name: Ensure SELinux is set to enforcing mode
+  ansible.builtin.lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX='
+    line: SELINUX=disabled
+
+- name: Check selinux status and aciton disable
+  shell: getenforce
+  register: __selinux_status
+  become: true
+  become_user: root
+
+- name: set_fact __selinux_status
+  set_fact: selinux_status={{ __selinux_status.stdout }}
+
+- debug: var=selinux_status
+
+- name: Temporary disable selinux without reboot system
+  shell: setenforce 0
+  when: selinux_status != "Disabled"
+
+
+- name: Change vm.overcommit_memory=1
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^vm.overcommit_memory='
+    line: 'vm.overcommit_memory=1'
+  become: true
+  become_user: root
+
+- name: Change net.core.somaxconn=65535
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^net.core.somaxconn='
+    line: 'net.core.somaxconn=65535'
+  become: true
+  become_user: root
+
+- name: Change transparent_hugepage
+  shell: echo never > /sys/kernel/mm/transparent_hugepage/enabled
+  become: true
+  become_user: root
+
+- name: Change transparent_hugepage
+  ansible.builtin.lineinfile:
+    path: /etc/rc.local
+    regexp: '^(.*)\/sys\/kernel\/mm\/transparent_hugepage\/enabled'
+    line: 'echo never > /sys/kernel/mm/transparent_hugepage/enabled'
+  become: true 
+  become_user: root
+
+- name: Increase range port 
+  shell: echo 'net.ipv4.ip_local_port_range = 10000 65000' > /etc/sysctl.d/network-tuning.conf
+  become: true
+  become_user: root
+
+- name: Apply new sysctl config
+  shell: sysctl -p --system
+  become: true
+  become_user: root
