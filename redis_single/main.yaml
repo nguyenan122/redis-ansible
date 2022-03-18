@@ -1,9 +1,0 @@
----
-- name: Install redis master only and turning basic os
-  hosts: redis_server
-
-  roles:
-    #- base_turning
-    - role: redis_single
-      become: true
-

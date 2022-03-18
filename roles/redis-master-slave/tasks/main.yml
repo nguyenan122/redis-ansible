@@ -1,0 +1,44 @@
+---
+- name: TUANDA
+  debug:
+    var: redis_role
+  tags:
+    - master
+
+# tasks file for redis-all-in-one
+- include: dependencies.yml
+  become: true
+  when: install_dependencies
+  tags:
+    - install
+
+- include: install.yml
+  become: true
+  tags:
+    - install
+  when:
+    - install_redis == 'yes'
+
+#If M-S, setup slave first
+- include: slave.yml
+  become: true
+  tags:
+    - slave
+  when:
+    - redis_role == 'slave'
+
+- include: master.yml
+  become: true
+  tags:
+    - master
+  when:
+    - redis_role  == 'master'
+
+
+- include: sentinel.yml
+  become: true
+  tags:
+    - sentinel
+  when:
+    - install_sentinel == 'yes'
+

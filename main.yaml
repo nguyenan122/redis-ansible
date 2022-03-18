@@ -1,0 +1,8 @@
+---
+- name: Install redis Master Slave
+  hosts: redis_server
+  vars:
+    - ahihi: 'kaka'
+  
+  roles:
+    - role: redis-master-slave
