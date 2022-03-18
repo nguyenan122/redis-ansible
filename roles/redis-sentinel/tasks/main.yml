@@ -1,0 +1,16 @@
+---
+- include: install.yml
+  become: true
+  tags:
+    - install
+  when:
+    - install_redis == 'yes'
+
+
+
+- include: sentinel.yml
+  become: true
+  tags:
+    - sentinel
+  when:
+    - redis_role == 'sentinel'

@@ -1,8 +1,7 @@
-
 - name: REDIS_"{{ redis_role }}" Copy config file
   template:
     src: redis_{{ redis_role }}.conf.j2
-    dest: "{{ redis_install_dir }}/conf/{{ redis_master_port }}.conf"
+    dest: "{{ redis_install_dir }}/conf/sentinel_{{ redis_sentinel_port }}.conf"
     mode: 0644
 
 - name: REDIS_"{{ redis_role }}" Chown owner to redis user
@@ -16,7 +15,7 @@
 - name: REDIS_"{{ redis_role }}" Copy systemd file
   template:
     src: redis_{{ redis_role }}.service.j2
-    dest: /etc/systemd/system/redis.service
+    dest: /etc/systemd/system/redis_sentinel.service
     mode: 0644
 
 - name: REDIS_"{{ redis_role }}" Just force systemd to reread configs
@@ -25,4 +24,4 @@
 
 - name: REDIS_"{{ redis_role }}" Run restart redis
   command: /bin/true
-  notify: restart redis
+  notify: restart sentinel

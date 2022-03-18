@@ -1,0 +1,74 @@
+- name: Upload redis install file
+  copy:
+    src: redis-{{ redis_version }}.tar.gz
+    dest: /setup/
+
+- name: Remove current untar folder if exist
+  file:
+    state: absent
+    path: /setup/redis-{{ redis_version }}
+  tags: make
+
+- name: Untar file redis-{{ redis_version }}.tar.gz
+  unarchive:
+    src: /setup/redis-{{ redis_version }}.tar.gz
+    dest: /setup/
+    remote_src: yes
+
+#Create user and group
+- name: check if redis user exists (ignore errors)
+  command: id {{ redis_user }}
+  ignore_errors: yes
+  changed_when: false
+  register: user_exists
+
+- name: add redis group
+  group:
+    name: "{{ redis_group }}"
+    state: present
+  when: user_exists is failed
+
+- name: add redis user
+  user:
+    name: "{{ redis_user }}"
+    group: "{{ redis_group }}"
+    comment: "Redis"
+    home: "{{ redis_install_dir }}"
+    shell: /bin/false
+    system: yes
+  when: user_exists is failed
+
+#Install
+- name: create running dir {{ redis_install_dir }}
+  file:
+    path: "{{ redis_install_dir }}/{{ item }}"
+    state: 'directory'
+    mode: '0755'
+  loop: 
+    - conf
+    - bin
+    - logs
+    - data
+
+- name: build redis
+  shell: "cd /setup/redis-{{ redis_version }} ; make"
+  become: true
+
+- name: installing redis binaries
+  shell: /bin/cp -f /setup/redis-{{ redis_version }}/src/{{ item }} {{ redis_install_dir }}/bin/
+  loop:
+    - redis-server
+    - redis-cli
+    - redis-sentinel
+    - redis-benchmark
+
+- name: Create short link
+  alternatives:
+    name: "{{ item }}"
+    path: "{{ redis_install_dir }}/bin/{{ item }}"
+    link: "/usr/bin/{{ item }}"
+  loop:
+    - redis-server
+    - redis-cli
+    - redis-sentinel
+    - redis-benchmark

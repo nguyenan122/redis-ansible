@@ -39,3 +39,7 @@ redis_slave_ip: 192.168.122.128
 redis_slave_replicaof: false
 redis_slave_masterauth: '{{ redis_master_auth }}'
 redis_slave_masteruser: '{{ redis_master_user }}'
+
+
+#Config Redis Sentinel
+redis_sentinel_port: 26379

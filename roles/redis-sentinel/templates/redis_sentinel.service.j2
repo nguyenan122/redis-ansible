@@ -1,0 +1,14 @@
+[Unit]
+Description=Redis Sentinel
+After=network.target
+
+[Service]
+User=redis
+Group=redis
+
+ExecStart={{ redis_install_dir }}/bin/redis-server {{ redis_install_dir }}/conf/sentinel_{{ redis_sentinel_port }}.conf --sentinel --supervised systemd --daemonize no
+ExecStop={{ redis_install_dir }}/bin/redis-cli {% if redis_master_auth -%} -a {{ redis_master_auth }} {% endif -%} -p {{ redis_sentinel_port }} SHUTDOWN
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

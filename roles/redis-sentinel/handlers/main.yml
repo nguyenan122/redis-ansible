@@ -1,0 +1,19 @@
+#Sentinel
+- name: "restart sentinel"
+  service:
+    name: redis_sentinel
+    state: restarted
+  become: true
+
+- name: "stop sentinel"
+  service:
+    name: redis_sentinel
+    state: stoped
+  become: true
+
+- name: "start sentinel"
+  service:
+    name: redis_sentinel
+    state: started
+  become: true
+

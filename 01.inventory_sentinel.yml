@@ -1,0 +1,3 @@
+[redis_sentinel]
+192.168.122.129 install_redis=no  redis_role=sentinel
+192.168.122.128 install_redis=no  redis_role=sentinel

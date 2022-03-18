@@ -1,0 +1,14 @@
+port 26379
+daemonize yes
+pidfile {{ redis_install_dir }}/bin/redis-sentinel.pid
+logfile {{ redis_install_dir }}/logs/sentinel.log
+dir {{ redis_install_dir }}/data
+
+sentinel monitor mymaster {{ redis_master_ip }} {{ redis_master_port }} 2
+{% if redis_master_auth -%} 
+sentinel auth-pass mymaster {{ redis_master_auth }}
+{% endif -%}
+sentinel down-after-milliseconds mymaster 3000
+sentinel parallel-syncs mymaster 1
+sentinel failover-timeout mymaster 10000
+sentinel deny-scripts-reconfig yes

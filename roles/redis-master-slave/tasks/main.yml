@@ -34,11 +34,3 @@
   when:
     - redis_role  == 'master'
 
-
-- include: sentinel.yml
-  become: true
-  tags:
-    - sentinel
-  when:
-    - install_sentinel == 'yes'
-

@@ -1,0 +1,6 @@
+
+- name: Install redis Sentinel after done Master Slave
+  hosts: redis_sentinel
+  
+  roles:
+    - role: redis-sentinel

@@ -6,7 +6,8 @@ After=network-online.target
 
 [Service]
 ExecStart={{ redis_install_dir }}/bin/redis-server {{ redis_install_dir }}/conf/6379.conf --supervised systemd --daemonize no
-ExecStop={{ redis_install_dir }}/bin/redis-cli {% if redis_master_auth -%} -a {{ redis_master_auth }} {% endif -%}  SHUTDOWN
+ExecStop={{ redis_install_dir }}/bin/redis-cli {% if redis_master_auth -%} -a {{ redis_master_auth }} {% endif -%} -p {{ redis_slave_port }} SHUTDOWN
+
 LimitNOFILE=10032
 User=redis
 Group=redis
